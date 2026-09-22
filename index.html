@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StyleCart · Clothes Shopping</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(145deg, #f9f6f2 0%, #ede8e0 100%);
+      min-height: 100vh;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .shop-container {
+      max-width: 1200px;
+      width: 100%;
+    }
+
+    /* header */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(12px);
+      padding: 1rem 2rem;
+      border-radius: 60px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+      margin-bottom: 2rem;
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .logo h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #2d2d2d, #5a4a3a);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
+    }
+
+    .logo span {
+      color: #c49a6c;
+      font-weight: 300;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+    }
+
+    .action-btn {
+      background: white;
+      border: none;
+      border-radius: 40px;
+      padding: 0.6rem 1.4rem;
+      font-weight: 600;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+      cursor: pointer;
+      transition: all 0.2s;
+      color: #2d2d2d;
+      border: 1px solid #e0d6cc;
+    }
+
+    .action-btn:hover {
+      background: #fff5eb;
+      border-color: #c49a6c;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(196, 154, 108, 0.15);
+    }
+
+    .action-btn i {
+      font-size: 1.2rem;
+    }
+
+    .count-badge {
+      background: #c49a6c;
+      color: white;
+      border-radius: 50px;
+      padding: 0.1rem 0.6rem;
+      font-size: 0.75rem;
+      margin-left: 0.2rem;
+    }
+
+    /* product grid */
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1.8rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .product-card {
+      background: white;
+      border-radius: 2rem;
+      padding: 1.5rem 1.2rem 1.2rem;
+      box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.08);
+      transition: all 0.25s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      border: 1px solid #f0e9e2;
+      position: relative;
+    }
+
+    .product-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 24px 32px -12px rgba(196, 154, 108, 0.25);
+      border-color: #e3d5c8;
+    }
+
+    .product-emoji {
+      font-size: 4.5rem;
+      margin-bottom: 0.8rem;
+      filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.06));
+      line-height: 1;
+    }
+
+    .product-name {
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: #2d2d2d;
+      margin-bottom: 0.3rem;
+    }
+
+    .product-price {
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: #c49a6c;
+      margin-bottom: 1.2rem;
+    }
+
+    .product-actions {
+      display: flex;
+      gap: 0.6rem;
+      width: 100%;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 40px;
+      padding: 0.6rem 1rem;
+      font-weight: 600;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      flex: 1;
+      min-width: 90px;
+    }
+
+    .btn-cart {
+      background: #2d2d2d;
+      color: white;
+    }
+
+    .btn-cart:hover {
+      background: #000;
+      transform: scale(1.03);
+    }
+
+    .btn-wish {
+      background: #f3efe9;
+      color: #7a6a5a;
+      border: 1px solid #e0d6cc;
+    }
+
+    .btn-wish.active {
+      background: #ffe4e1;
+      color: #d44a4a;
+      border-color: #d44a4a;
+    }
+
+    .btn-wish:hover {
+      background: #ffe4e1;
+      border-color: #d44a4a;
+      color: #d44a4a;
+    }
+
+    /* cart summary */
+    .cart-section {
+      background: white;
+      border-radius: 2rem;
+      padding: 2rem;
+      box-shadow: 0 12px 30px -8px rgba(0, 0, 0, 0.08);
+      border: 1px solid #f0e9e2;
+      margin-top: 1rem;
+    }
+
+    .cart-section h2 {
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin-bottom: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      color: #2d2d2d;
+    }
+
+    .cart-section h2 i {
+      color: #c49a6c;
+    }
+
+    .cart-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.8rem 1rem;
+      background: #faf8f6;
+      border-radius: 60px;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+    }
+
+    .cart-item-info {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      font-weight: 500;
+      color: #3d3d3d;
+    }
+
+    .cart-item-emoji {
+      font-size: 1.8rem;
+    }
+
+    .cart-item-price {
+      font-weight: 600;
+      color: #c49a6c;
+    }
+
+    .cart-item-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .qty-btn {
+      background: white;
+      border: 1px solid #e0d6cc;
+      border-radius: 40px;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.15s;
+      color: #2d2d2d;
+      font-size: 1rem;
+    }
+
+    .qty-btn:hover {
+      background: #f0e9e2;
+    }
+
+    .remove-btn {
+      background: transparent;
+      border: none;
+      color: #b0a8a0;
+      cursor: pointer;
+      font-size: 1.1rem;
+      padding: 0.2rem 0.5rem;
+      transition: 0.15s;
+      border-radius: 40px;
+    }
+
+    .remove-btn:hover {
+      color: #d44a4a;
+      background: #ffe4e1;
+    }
+
+    .cart-total {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 1.2rem;
+      border-top: 2px dashed #e0d6cc;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #2d2d2d;
+    }
+
+    .cart-total span {
+      color: #c49a6c;
+    }
+
+    .empty-cart {
+      text-align: center;
+      color: #b0a8a0;
+      padding: 1.5rem 0;
+      font-style: italic;
+    }
+
+    .clear-cart-btn {
+      background: transparent;
+      border: 1px solid #e0d6cc;
+      border-radius: 40px;
+      padding: 0.4rem 1.2rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #7a6a5a;
+      cursor: pointer;
+      transition: 0.2s;
+      margin-left: 1rem;
+    }
+
+    .clear-cart-btn:hover {
+      background: #ffe4e1;
+      border-color: #d44a4a;
+      color: #d44a4a;
+    }
+
+    /* toast */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #2d2d2d;
+      color: white;
+      padding: 0.9rem 2rem;
+      border-radius: 60px;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      font-weight: 500;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      transition: transform 0.3s ease;
+      z-index: 999;
+      pointer-events: none;
+      opacity: 0;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    .toast i {
+      color: #c49a6c;
+      font-size: 1.2rem;
+    }
+
+    /* responsive */
+    @media (max-width: 600px) {
+      .header {
+        flex-direction: column;
+        align-items: stretch;
+        border-radius: 30px;
+        padding: 1.2rem;
+      }
+      .header-actions {
+        justify-content: center;
+      }
+      .product-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+      .product-emoji {
+        font-size: 3.2rem;
+      }
+      .product-name {
+        font-size: 0.95rem;
+      }
+      .btn {
+        font-size: 0.7rem;
+        padding: 0.5rem 0.6rem;
+        min-width: 70px;
+      }
+      .cart-item {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+  <!-- Font Awesome for icons (optional, but adds nice icons) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+  <div class="shop-container">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">
+        <h1>Style<span>Cart</span></h1>
+      </div>
+      <div class="header-actions">
+        <button class="action-btn" id="wishlistHeaderBtn">
+          <i class="fas fa-heart" style="color:#d44a4a;"></i> Wishlist <span class="count-badge" id="wishlistCount">0</span>
+        </button>
+        <button class="action-btn" id="cartHeaderBtn">
+          <i class="fas fa-shopping-bag" style="color:#c49a6c;"></i> Cart <span class="count-badge" id="cartCount">0</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Product Grid -->
+    <div class="product-grid" id="productGrid">
+      <!-- products injected via JS -->
+    </div>
+
+    <!-- Cart Summary -->
+    <section class="cart-section" id="cartSection">
+      <h2>
+        <i class="fas fa-shopping-cart"></i> Your Cart
+        <button class="clear-cart-btn" id="clearCartBtn">Clear all</button>
+      </h2>
+      <div class="cart-list" id="cartList">
+        <!-- cart items injected -->
+        <div class="empty-cart">Your cart is empty 🛍️</div>
+      </div>
+      <div class="cart-total" id="cartTotalRow" style="display: none;">
+        <span>Total</span>
+        <span id="cartTotalAmount">$0.00</span>
+      </div>
+    </section>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast">
+    <i class="fas fa-check-circle"></i>
+    <span id="toastMessage">Added to cart</span>
+  </div>
+
+  <script>
+    (function() {
+      // ---------- PRODUCT DATA ----------
+      const products = [
+        { id: 1, name: 'Classic Tee', price: 19.99, emoji: '👕', color: '#f0f0f0' },
+        { id: 2, name: 'Slim Jeans', price: 49.99, emoji: '👖', color: '#d4e6f1' },
+        { id: 3, name: 'Summer Dress', price: 39.99, emoji: '👗', color: '#fce4ec' },
+        { id: 4, name: 'Wool Coat', price: 89.99, emoji: '🧥', color: '#e8d5c4' },
+        { id: 5, name: 'Blouse', price: 29.99, emoji: '👚', color: '#f3e5f5' },
+        { id: 6, name: 'Shorts', price: 24.99, emoji: '🩳', color: '#e0f2f1' },
+        { id: 7, name: 'Formal Shirt', price: 44.99, emoji: '👔', color: '#e3f2fd' },
+        { id: 8, name: 'Hoodie', price: 54.99, emoji: '🧥', color: '#ede7f6' }
+      ];
+
+      // ---------- STATE ----------
+      let cart = [];            // array of { id, quantity }
+      let wishlist = new Set(); // set of product ids
+
+      // DOM elements
+      const productGrid = document.getElementById('productGrid');
+      const cartList = document.getElementById('cartList');
+      const cartTotalRow = document.getElementById('cartTotalRow');
+      const cartTotalAmount = document.getElementById('cartTotalAmount');
+      const cartCountSpan = document.getElementById('cartCount');
+      const wishlistCountSpan = document.getElementById('wishlistCount');
+      const toast = document.getElementById('toast');
+      const toastMessage = document.getElementById('toastMessage');
+      const clearCartBtn = document.getElementById('clearCartBtn');
+
+      // ---------- RENDER PRODUCTS ----------
+      function renderProducts() {
+        productGrid.innerHTML = products.map(product => {
+          const isWishlisted = wishlist.has(product.id);
+          return `
+            <div class="product-card" data-id="${product.id}">
+              <div class="product-emoji" style="background: ${product.color}; border-radius: 1.5rem; padding: 0.6rem 1rem;">${product.emoji}</div>
+              <div class="product-name">${product.name}</div>
+              <div class="product-price">$${product.price.toFixed(2)}</div>
+              <div class="product-actions">
+                <button class="btn btn-cart" data-id="${product.id}">
+                  <i class="fas fa-cart-plus"></i> Add
+                </button>
+                <button class="btn btn-wish ${isWishlisted ? 'active' : ''}" data-id="${product.id}">
+                  <i class="fas fa-heart"></i> ${isWishlisted ? 'Saved' : 'Wish'}
+                </button>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // ---------- RENDER CART ----------
+      function renderCart() {
+        if (cart.length === 0) {
+          cartList.innerHTML = '<div class="empty-cart">Your cart is empty 🛍️</div>';
+          cartTotalRow.style.display = 'none';
+          updateCounts();
+          return;
+        }
+
+        let total = 0;
+        cartList.innerHTML = cart.map(item => {
+          const product = products.find(p => p.id === item.id);
+          if (!product) return '';
+          const subtotal = product.price * item.quantity;
+          total += subtotal;
+          return `
+            <div class="cart-item" data-id="${product.id}">
+              <div class="cart-item-info">
+                <span class="cart-item-emoji">${product.emoji}</span>
+                <span>${product.name}</span>
+                <span class="cart-item-price">$${product.price.toFixed(2)}</span>
+              </div>
+              <div class="cart-item-actions">
+                <button class="qty-btn" data-action="decrease" data-id="${product.id}">−</button>
+                <span style="font-weight:600; min-width: 20px; text-align:center;">${item.quantity}</span>
+                <button class="qty-btn" data-action="increase" data-id="${product.id}">+</button>
+                <button class="remove-btn" data-action="remove" data-id="${product.id}"><i class="fas fa-trash-alt"></i></button>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        cartTotalRow.style.display = 'flex';
+        cartTotalAmount.textContent = `$${total.toFixed(2)}`;
+        updateCounts();
+      }
+
+      // ---------- UPDATE HEADER COUNTS ----------
+      function updateCounts() {
+        const cartTotalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+        cartCountSpan.textContent = cartTotalItems;
+        wishlistCountSpan.textContent = wishlist.size;
+      }
+
+      // ---------- TOAST ----------
+      function showToast(message, icon = 'fa-check-circle') {
+        toastMessage.textContent = message;
+        toast.querySelector('i').className = `fas ${icon}`;
+        toast.classList.add('show');
+        setTimeout(() => {
+          toast.classList.remove('show');
+        }, 2200);
+      }
+
+      // ---------- ADD TO CART ----------
+      function addToCart(productId) {
+        const existing = cart.find(item => item.id === productId);
+        if (existing) {
+          existing.quantity += 1;
+        } else {
+          cart.push({ id: productId, quantity: 1 });
+        }
+        renderCart();
+        const product = products.find(p => p.id === productId);
+        showToast(`${product.emoji} ${product.name} added to cart`, 'fa-cart-plus');
+      }
+
+      // ---------- TOGGLE WISHLIST ----------
+      function toggleWishlist(productId) {
+        if (wishlist.has(productId)) {
+          wishlist.delete(productId);
+          showToast('Removed from wishlist', 'fa-heart-broken');
+        } else {
+          wishlist.add(productId);
+          showToast('Added to wishlist ❤️', 'fa-heart');
+        }
+        renderProducts(); // re-render to update heart state
+        updateCounts();
+      }
+
+      // ---------- UPDATE CART QUANTITY / REMOVE ----------
+      function updateCartItem(productId, action) {
+        const itemIndex = cart.findIndex(item => item.id === productId);
+        if (itemIndex === -1) return;
+
+        if (action === 'increase') {
+          cart[itemIndex].quantity += 1;
+        } else if (action === 'decrease') {
+          if (cart[itemIndex].quantity > 1) {
+            cart[itemIndex].quantity -= 1;
+          } else {
+            cart.splice(itemIndex, 1);
+          }
+        } else if (action === 'remove') {
+          cart.splice(itemIndex, 1);
+        }
+
+        renderCart();
+        if (action === 'remove') showToast('Item removed from cart', 'fa-trash-alt');
+        if (action === 'decrease' && cart[itemIndex]?.quantity === 0) {
+          // already handled
+        }
+      }
+
+      // ---------- CLEAR CART ----------
+      function clearCart() {
+        if (cart.length === 0) return;
+        cart = [];
+        renderCart();
+        showToast('Cart cleared', 'fa-trash-alt');
+      }
+
+      // ---------- EVENT LISTENERS ----------
+      // Product grid clicks (delegation)
+      productGrid.addEventListener('click', (e) => {
+        const btnCart = e.target.closest('.btn-cart');
+        const btnWish = e.target.closest('.btn-wish');
+
+        if (btnCart) {
+          const id = parseInt(btnCart.dataset.id);
+          addToCart(id);
+        } else if (btnWish) {
+          const id = parseInt(btnWish.dataset.id);
+          toggleWishlist(id);
+        }
+      });
+
+      // Cart list clicks (delegation)
+      cartList.addEventListener('click', (e) => {
+        const btn = e.target.closest('.qty-btn, .remove-btn');
+        if (!btn) return;
+        const id = parseInt(btn.dataset.id);
+        const action = btn.dataset.action;
+        if (action) updateCartItem(id, action);
+      });
+
+      // Clear cart
+      clearCartBtn.addEventListener('click', clearCart);
+
+      // Header buttons (just for visual feedback)
+      document.getElementById('cartHeaderBtn').addEventListener('click', () => {
+        document.getElementById('cartSection').scrollIntoView({ behavior: 'smooth' });
+      });
+      document.getElementById('wishlistHeaderBtn').addEventListener('click', () => {
+        showToast(`You have ${wishlist.size} items in wishlist ❤️`, 'fa-heart');
+      });
+
+      // ---------- INITIALIZATION ----------
+      function init() {
+        // Pre-populate wishlist with one item for demo
+        wishlist.add(3); // Summer Dress
+        renderProducts();
+        renderCart();
+        updateCounts();
+      }
+
+      init();
+    })();
+  </script>
+</body>
+</html>
